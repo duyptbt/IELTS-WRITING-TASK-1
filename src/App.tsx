@@ -19,7 +19,9 @@ import {
   ChevronRight,
   ChevronLeft,
   Lightbulb,
-  MessageSquare
+  MessageSquare,
+  Award,
+  HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from "@google/genai";
@@ -193,58 +195,88 @@ const exercise4Questions = [
 // --- Components ---
 
 const CouncilGraph = () => (
-  <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm h-[400px] flex flex-col">
-    <h3 className="text-center font-serif italic text-lg mb-6">Council donations to book clubs</h3>
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={councilData}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-        <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#71717a' }} />
-        <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#71717a' }} tickFormatter={(val) => `£${val/1000}k`} />
-        <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#71717a' }} />
-        <Tooltip 
-          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-        />
-        <Legend verticalAlign="top" height={36}/>
-        <Line 
-          yAxisId="left"
-          type="monotone" 
-          dataKey="amount" 
-          name="Amount Given (£)"
-          stroke="#18181b" 
-          strokeWidth={3} 
-          dot={{ r: 4, fill: '#18181b', strokeWidth: 2, stroke: '#fff' }}
-        />
-        <Line 
-          yAxisId="right"
-          type="monotone" 
-          dataKey="members" 
-          name="Club Members"
-          stroke="#71717a" 
-          strokeDasharray="5 5"
-          strokeWidth={2} 
-          dot={{ r: 4, fill: '#71717a', strokeWidth: 2, stroke: '#fff' }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-    <div className="mt-4 p-4 bg-zinc-50 rounded-xl text-xs text-zinc-500 flex gap-4">
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-0.5 bg-zinc-900"></div>
-        <span>Amount Given (£)</span>
+  <div className="glass-card rounded-[2rem] p-8 h-[450px] flex flex-col">
+    <div className="flex items-center justify-between mb-8">
+      <div>
+        <h3 className="font-serif text-2xl font-bold tracking-tight">Council Donations</h3>
+        <p className="text-xs text-zinc-400 font-mono uppercase tracking-widest mt-1">Annual Funding vs. Membership</p>
       </div>
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-0.5 bg-zinc-500 border-t border-dashed"></div>
-        <span>Number of Members</span>
+      <div className="flex gap-6">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-1 bg-zinc-900 rounded-full"></div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Amount Given (£)</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-0 border-b-2 border-dashed border-zinc-300"></div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Number of Members</span>
+        </div>
       </div>
+    </div>
+    <div className="flex-1 min-h-0">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={councilData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f0f0f0" />
+          <XAxis 
+            dataKey="year" 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fontSize: 11, fill: '#a1a1aa', fontWeight: 500 }} 
+            dy={10}
+          />
+          <YAxis 
+            yAxisId="left" 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fontSize: 11, fill: '#a1a1aa', fontWeight: 500 }} 
+            tickFormatter={(val) => `£${val/1000}k`} 
+          />
+          <YAxis 
+            yAxisId="right" 
+            orientation="right" 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fontSize: 11, fill: '#a1a1aa', fontWeight: 500 }} 
+          />
+          <Tooltip 
+            cursor={{ stroke: '#f4f4f5', strokeWidth: 2 }}
+            contentStyle={{ 
+              borderRadius: '16px', 
+              border: 'none', 
+              boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+              padding: '12px'
+            }}
+          />
+          <Line 
+            yAxisId="left"
+            type="monotone" 
+            dataKey="amount" 
+            stroke="#18181b" 
+            strokeWidth={4} 
+            dot={{ r: 6, fill: '#18181b', strokeWidth: 3, stroke: '#fff' }}
+            activeDot={{ r: 8, strokeWidth: 0 }}
+          />
+          <Line 
+            yAxisId="right"
+            type="monotone" 
+            dataKey="members" 
+            stroke="#d4d4d8" 
+            strokeWidth={3} 
+            strokeDasharray="2 4"
+            dot={{ r: 5, fill: '#d4d4d8', strokeWidth: 2, stroke: '#fff' }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   </div>
 );
 
 const ProgressBar = ({ current, total }: { current: number, total: number }) => (
-  <div className="w-full bg-zinc-200 h-1 rounded-full overflow-hidden mb-8">
+  <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden mb-12">
     <motion.div 
       className="bg-zinc-900 h-full"
       initial={{ width: 0 }}
       animate={{ width: `${(current / total) * 100}%` }}
+      transition={{ type: "spring", stiffness: 50, damping: 20 }}
     />
   </div>
 );
@@ -273,18 +305,23 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans selection:bg-zinc-900 selection:text-white">
-      <header className="border-b border-zinc-200 bg-white sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-white">
-              <TrendingUp size={20} />
+      <header className="border-b border-zinc-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-zinc-200">
+              <TrendingUp size={24} />
             </div>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight">IELTS Writing Task 1</h1>
-              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Graph Description Practice</p>
+              <h1 className="text-xl font-serif font-bold tracking-tight">IELTS Masterclass</h1>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-[0.2em] mt-0.5">Academic Writing Task 1</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-zinc-400">
+              <span className={step === 1 ? "text-zinc-900" : ""}>01. Trends</span>
+              <span className={step === 2 ? "text-zinc-900" : ""}>02. Rephrasing</span>
+              <span className={step === 3 ? "text-zinc-900" : ""}>03. Comparison</span>
+            </div>
             <button 
               onClick={() => {
                 setEx1Answers({});
@@ -295,391 +332,414 @@ export default function App() {
                 setIsFinished(false);
                 setStep(1);
               }}
-              className="p-2 hover:bg-zinc-100 rounded-lg transition-colors text-zinc-500"
-              title="Reset App"
+              className="p-2.5 hover:bg-zinc-50 rounded-xl transition-colors text-zinc-400 hover:text-zinc-900"
+              title="Reset Practice"
             >
-              <RefreshCcw size={18} />
+              <RefreshCcw size={20} />
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-12">
+      <main className="max-w-6xl mx-auto px-8 py-16">
         <ProgressBar current={step} total={3} />
 
         <AnimatePresence mode="wait">
           {!isFinished ? (
             <div key="exercises" className="space-y-12">
               {step === 1 && (
-            <motion.div 
-              key="step1"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-12"
-            >
-              <section className="grid lg:grid-cols-2 gap-12 items-start">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-600">
-                    Exercise 1
-                  </div>
-                  <h2 className="text-3xl font-light tracking-tight leading-tight">
-                    Describing Trends: <span className="font-medium italic">Borderline Bookshop</span>
-                  </h2>
-                  <p className="text-zinc-600 leading-relaxed">
-                    Look at the graph and complete the sentences with words and phrases from the box. 
-                    Pay attention to the direction and intensity of the changes.
-                  </p>
-                  
-                  <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Vocabulary Box</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {exercise1Options.map(opt => (
-                        <span key={opt} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700">
-                          {opt}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm h-[400px]">
-                  <h3 className="text-center font-serif italic text-lg mb-6">Borderline bookshop: Customer numbers (x100)</h3>
-                  <ResponsiveContainer width="100%" height="80%">
-                    <LineChart data={borderlineData}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#71717a' }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#71717a' }} domain={[0, 20]} />
-                      <Tooltip 
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="customers" 
-                        stroke="#18181b" 
-                        strokeWidth={3} 
-                        dot={{ r: 4, fill: '#18181b', strokeWidth: 2, stroke: '#fff' }}
-                        activeDot={{ r: 6, strokeWidth: 0 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </section>
-
-              <section className="bg-white border border-zinc-200 rounded-3xl p-8 shadow-sm">
-                <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
-                  {exercise1Questions.map(q => (
-                    <div key={q.id} className="flex flex-wrap items-center gap-x-2 gap-y-3 text-lg">
-                      <span className="text-zinc-400 font-mono text-sm">{q.id}.</span>
-                      <span>{q.text}</span>
-                      <input 
-                        type="text"
-                        placeholder="..."
-                        value={ex1Answers[q.id] || ""}
-                        onChange={(e) => handleEx1Change(q.id, e.target.value)}
-                        disabled={showResults}
-                        className={`
-                          px-3 py-1 rounded-lg border-b-2 font-medium transition-all outline-none w-40
-                          ${showResults 
-                            ? (ex1Answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase().trim() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
-                            : 'bg-zinc-50 border-zinc-300 focus:border-zinc-900'
-                          }
-                        `}
-                      />
-                      <span className="text-zinc-600">{q.suffix}</span>
-                      {showResults && (
-                        <div className="ml-auto">
-                          {ex1Answers[q.id] === q.answer ? <CheckCircle2 className="text-emerald-500" size={20} /> : <XCircle className="text-rose-500" size={20} />}
-                        </div>
-                      )}
-                      {showResults && (
-                        <motion.div 
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          className="w-full mt-2 p-3 bg-zinc-50 border-l-2 border-zinc-900 rounded-r-lg"
-                        >
-                          <p className="text-sm text-zinc-600 leading-relaxed">
-                            <strong className="text-zinc-900">Explanation:</strong> {q.explanation}
+                <motion.div 
+                  key="step1"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -40 }}
+                  className="space-y-16"
+                >
+                  <div className="grid lg:grid-cols-[1fr_450px] gap-16 items-start">
+                    <div className="space-y-16">
+                      <section className="space-y-10">
+                        <div className="space-y-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                            Module 01
+                          </div>
+                          <h2 className="text-5xl font-serif font-bold tracking-tight leading-[1.1]">
+                            Describing <span className="italic font-normal">Trends</span>
+                          </h2>
+                          <p className="text-zinc-500 text-lg leading-relaxed max-w-md">
+                            Master the vocabulary of change. Observe the fluctuations of Borderline Bookshop and identify the patterns.
                           </p>
-                        </motion.div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-12 flex justify-center">
-                  {!showResults ? (
-                    <button 
-                      onClick={() => setShowResults(true)}
-                      className="px-8 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-all shadow-lg shadow-zinc-200"
-                    >
-                      Check Answers
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => setStep(2)}
-                      className="px-8 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-all flex items-center gap-2"
-                    >
-                      Next Exercise <ChevronRight size={18} />
-                    </button>
-                  )}
-                </div>
-              </section>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div 
-              key="step2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-12"
-            >
-              <section className="grid lg:grid-cols-2 gap-12 items-start">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-600">
-                    Exercise 2
-                  </div>
-                  <h2 className="text-3xl font-light tracking-tight leading-tight">
-                    Rephrasing Trends: <span className="font-medium italic">Noun vs. Verb Phrases</span>
-                  </h2>
-                  <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-5 space-y-3">
-                    <p className="text-sm text-zinc-700 leading-relaxed italic">
-                      "The graph below shows how much money a city council gave to book clubs over a four-year period. 
-                      Summarise the information by selecting and reporting the main features, and make comparisons where relevant. 
-                      You should write at least 150 words."
-                    </p>
-                  </div>
-                  <p className="text-zinc-600 leading-relaxed">
-                    Complete the second sentence in each pair, replacing the words and phrases in bold with words from the box. 
-                    You will need to use some words more than once.
-                  </p>
-
-                  <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Vocabulary Box</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {exercise2Options.map(opt => (
-                        <span key={opt} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700">
-                          {opt}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <CouncilGraph />
-              </section>
-
-              <section className="bg-white border border-zinc-200 rounded-3xl p-8 shadow-sm space-y-8">
-                {exercise2Questions.map(q => (
-                  <div key={q.id} className="space-y-3 pb-6 border-b border-zinc-100 last:border-0">
-                    <div className="text-base text-zinc-400 flex gap-2">
-                      <span className="font-mono">{q.id}.</span>
-                      <p>
-                        {q.original.split(q.bold).map((part, i, arr) => (
-                          <React.Fragment key={i}>
-                            {part}
-                            {i < arr.length - 1 && <span className="font-bold text-zinc-900">{q.bold}</span>}
-                          </React.Fragment>
-                        ))}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-3 text-lg">
-                      <span className="text-zinc-900">{q.prefix}</span>
-                      {q.blanks.map((ans, bIdx) => (
-                      <input 
-                        type="text"
-                        placeholder="..."
-                        key={`b1-${bIdx}`}
-                        value={ex2Answers[`${q.id}-${bIdx}`] || ""}
-                        onChange={(e) => handleEx2Change(q.id, bIdx, e.target.value)}
-                        disabled={showEx2Results}
-                        className={`
-                          px-3 py-1 rounded-lg border-b-2 font-medium transition-all outline-none w-32
-                          ${showEx2Results 
-                            ? (ex2Answers[`${q.id}-${bIdx}`]?.toLowerCase().trim() === ans.toLowerCase().trim() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
-                            : 'bg-zinc-50 border-zinc-300 focus:border-zinc-900'
-                          }
-                        `}
-                      />
-                      ))}
-                      {q.mid && <span className="text-zinc-900">{q.mid}</span>}
-                      {q.blanks2 && q.blanks2.map((ans, bIdx) => (
-                        <input 
-                          type="text"
-                          placeholder="..."
-                          key={`b2-${bIdx}`}
-                          value={ex2Answers[`${q.id}-${bIdx + q.blanks.length}`] || ""}
-                          onChange={(e) => handleEx2Change(q.id, bIdx + q.blanks.length, e.target.value)}
-                          disabled={showEx2Results}
-                          className={`
-                            px-3 py-1 rounded-lg border-b-2 font-medium transition-all outline-none w-32
-                            ${showEx2Results 
-                              ? (ex2Answers[`${q.id}-${bIdx + q.blanks.length}`]?.toLowerCase().trim() === ans.toLowerCase().trim() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
-                              : 'bg-zinc-50 border-zinc-300 focus:border-zinc-900'
-                            }
-                          `}
-                        />
-                      ))}
-                      <span className="text-zinc-600">{q.suffix}</span>
-                    </div>
-                    {showEx2Results && (
-                      <motion.div 
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 p-4 bg-zinc-50 border-l-4 border-zinc-900 rounded-r-xl"
-                      >
-                        <p className="text-sm text-zinc-600 leading-relaxed">
-                          <strong className="text-zinc-900">Explanation:</strong> {q.explanation}
-                        </p>
-                      </motion.div>
-                    )}
-                  </div>
-                ))}
-
-                <div className="flex justify-between items-center pt-8">
-                  <button 
-                    onClick={() => setStep(1)}
-                    className="flex items-center gap-2 text-zinc-500 font-semibold hover:text-zinc-900 transition-colors"
-                  >
-                    <ChevronLeft size={18} /> Back
-                  </button>
-                  {!showEx2Results ? (
-                    <button 
-                      onClick={() => setShowEx2Results(true)}
-                      className="px-8 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-all shadow-lg shadow-zinc-200"
-                    >
-                      Check Answers
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => setStep(3)}
-                      className="px-8 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-all flex items-center gap-2"
-                    >
-                      Next Exercise <ChevronRight size={18} />
-                    </button>
-                  )}
-                </div>
-              </section>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div 
-              key="step3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-12"
-            >
-              <section className="grid lg:grid-cols-2 gap-12 items-start">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-600">
-                    EXERCISE 3
-                  </div>
-                  <h2 className="text-3xl font-light tracking-tight leading-tight">
-                    Comparing Data: <span className="font-medium italic">Council Donations</span>
-                  </h2>
-                  <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-5 space-y-3">
-                    <p className="text-sm text-zinc-700 leading-relaxed italic">
-                      "The graph below shows how much money a city council gave to book clubs over a four-year period. 
-                      Summarise the information by selecting and reporting the main features, and make comparisons where relevant. 
-                      You should write at least 150 words."
-                    </p>
-                  </div>
-                  <p className="text-zinc-600 leading-relaxed">
-                    This graph shows two different metrics over a four-year period. 
-                    Analyze the relationship between the amount of money given and the number of members.
-                  </p>
-
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-400">True or False?</h3>
-                    <div className="space-y-3">
-                      {exercise4Questions.map(q => (
-                        <div key={q.id} className={`p-4 border rounded-xl flex items-center justify-between gap-4 transition-all ${showEx4Results ? (ex4Answers[q.id]?.toLowerCase().trim() === q.answer.toString() ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200') : 'bg-white border-zinc-200'}`}>
-                          <div className="flex items-center gap-3">
-                            {showEx4Results && (
-                              <div className="shrink-0">
-                                {ex4Answers[q.id]?.toLowerCase().trim() === q.answer.toString() ? <CheckCircle2 size={18} className="text-emerald-500" /> : <XCircle size={18} className="text-rose-500" />}
-                              </div>
-                            )}
-                            <p className="text-lg font-medium text-zinc-700">{q.text}</p>
-                          </div>
-                          <div className="flex gap-2 shrink-0">
-                            <input 
-                              type="text"
-                              placeholder="True or False?"
-                              value={ex4Answers[q.id] || ""}
-                              onChange={(e) => handleEx4Change(q.id, e.target.value)}
-                              disabled={showEx4Results}
-                              className={`
-                                px-4 py-2 rounded-xl border-b-2 font-medium transition-all outline-none w-40
-                                ${showEx4Results 
-                                  ? (ex4Answers[q.id]?.toLowerCase().trim() === q.answer.toString() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
-                                  : 'bg-zinc-50 border-zinc-300 focus:border-zinc-900'
-                                }
-                              `}
-                            />
+                        </div>
+                        
+                        <div className="glass-card rounded-[2rem] p-8">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6">Lexical Resource</h3>
+                          <div className="flex flex-wrap gap-3">
+                            {exercise1Options.map(opt => (
+                              <span key={opt} className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 tracking-tight">
+                                {opt}
+                              </span>
+                            ))}
                           </div>
                         </div>
-                      ))}
+                      </section>
+
+                      <section className="glass-card rounded-[3rem] p-12">
+                        <div className="grid gap-x-16 gap-y-12">
+                          {exercise1Questions.map(q => (
+                            <div key={q.id} className="space-y-4">
+                              <div className="flex items-start gap-4 text-xl">
+                                <span className="text-zinc-200 font-serif italic text-3xl leading-none mt-1">{q.id.toString().padStart(2, '0')}</span>
+                                <div className="flex-1 leading-relaxed">
+                                  <span className="text-zinc-400">{q.text}</span>
+                                  <input 
+                                    type="text"
+                                    placeholder="..."
+                                    value={ex1Answers[q.id] || ""}
+                                    onChange={(e) => handleEx1Change(q.id, e.target.value)}
+                                    disabled={showResults}
+                                    className={`
+                                      mx-2 px-4 py-1 rounded-xl border-b-2 font-bold transition-all outline-none w-48 text-center
+                                      ${showResults 
+                                        ? (ex1Answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase().trim() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
+                                        : 'bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:bg-white'
+                                      }
+                                    `}
+                                  />
+                                  <span className="text-zinc-400">{q.suffix}</span>
+                                </div>
+                              </div>
+                              {showResults && (
+                                <motion.div 
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="ml-12 p-4 bg-zinc-50/50 rounded-2xl border border-zinc-100"
+                                >
+                                  <p className="text-xs text-zinc-500 leading-relaxed">
+                                    <span className="font-bold text-zinc-900 uppercase tracking-widest text-[9px] mr-2">Logic:</span> {q.explanation}
+                                  </p>
+                                </motion.div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="mt-12 flex justify-center">
+                          {!showResults ? (
+                            <button 
+                              onClick={() => setShowResults(true)}
+                              className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200 active:scale-95"
+                            >
+                              Verify Observations
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => setStep(2)}
+                              className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all flex items-center gap-3 shadow-xl shadow-zinc-200 active:scale-95"
+                            >
+                              Next Module <ChevronRight size={20} />
+                            </button>
+                          )}
+                        </div>
+                      </section>
                     </div>
-                    
-                    {!showEx4Results ? (
-                      <button 
-                        onClick={() => setShowEx4Results(true)}
-                        disabled={Object.keys(ex4Answers).length < exercise4Questions.length}
-                        className="w-full py-3 bg-zinc-100 text-zinc-900 rounded-xl font-bold text-sm hover:bg-zinc-200 transition-all disabled:opacity-50"
-                      >
-                        Check True/False Answers
-                      </button>
-                    ) : (
-                      <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
-                        <Lightbulb size={18} className="text-amber-500 shrink-0 mt-0.5" />
-                        <p className="text-xs text-amber-800 leading-relaxed">
-                          <strong>Tip:</strong> Pay close attention to the dotted line vs. the solid line. The solid line represents money given by the council, while the dotted line shows the members.
-                        </p>
+
+                    <aside className="sticky top-32">
+                      <div className="glass-card rounded-[2rem] p-8 h-[450px]">
+                        <div className="flex items-center justify-between mb-8">
+                          <h3 className="font-serif text-2xl font-bold tracking-tight">Borderline Bookshop</h3>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Customer Numbers (x100)</span>
+                        </div>
+                        <div className="h-[300px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={borderlineData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f0f0f0" />
+                              <XAxis 
+                                dataKey="month" 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fontSize: 11, fill: '#a1a1aa', fontWeight: 500 }} 
+                                dy={10}
+                              />
+                              <YAxis 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fontSize: 11, fill: '#a1a1aa', fontWeight: 500 }} 
+                                domain={[0, 20]} 
+                              />
+                              <Tooltip 
+                                cursor={{ stroke: '#f4f4f5', strokeWidth: 2 }}
+                                contentStyle={{ 
+                                  borderRadius: '16px', 
+                                  border: 'none', 
+                                  boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                                  padding: '12px'
+                                }}
+                              />
+                              <Line 
+                                type="monotone" 
+                                dataKey="customers" 
+                                stroke="#18181b" 
+                                strokeWidth={4} 
+                                dot={{ r: 6, fill: '#18181b', strokeWidth: 3, stroke: '#fff' }}
+                                activeDot={{ r: 8, strokeWidth: 0 }}
+                              />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
                       </div>
-                    )}
+                    </aside>
                   </div>
-                </div>
+                </motion.div>
+              )}
 
-                <CouncilGraph />
-              </section>
+              {step === 2 && (
+                <motion.div 
+                  key="step2"
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  className="space-y-16"
+                >
+                  <div className="grid lg:grid-cols-[1fr_450px] gap-16 items-start">
+                    <div className="space-y-16">
+                      <section className="space-y-10">
+                        <div className="space-y-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                            Module 02
+                          </div>
+                          <h2 className="text-5xl font-serif font-bold tracking-tight leading-[1.1]">
+                            Syntactic <span className="italic font-normal">Variation</span>
+                          </h2>
+                          <p className="text-zinc-500 text-lg leading-relaxed max-w-md">
+                            Learn to rephrase trends using different grammatical structures. Convert verbs to nouns with precision.
+                          </p>
+                        </div>
 
-              <div className="flex justify-between items-center pt-8 border-t border-zinc-200">
-                <button 
-                  onClick={() => setStep(2)}
-                  className="flex items-center gap-2 text-zinc-500 font-semibold hover:text-zinc-900 transition-colors"
+                        <div className="glass-card rounded-[2rem] p-8">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6">Vocabulary Box</h3>
+                          <div className="flex flex-wrap gap-3">
+                            {exercise2Options.map(opt => (
+                              <span key={opt} className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 tracking-tight">
+                                {opt}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </section>
+
+                      <section className="glass-card rounded-[3rem] p-12 space-y-12">
+                        {exercise2Questions.map(q => (
+                          <div key={q.id} className="space-y-6 pb-12 border-b border-zinc-50 last:border-0 last:pb-0">
+                            <div className="flex items-start gap-4">
+                              <span className="text-zinc-200 font-serif italic text-3xl leading-none">{q.id.toString().padStart(2, '0')}</span>
+                              <div className="space-y-4 flex-1">
+                                <p className="text-zinc-400 text-lg italic">
+                                  {q.original.split(q.bold).map((part, i, arr) => (
+                                    <React.Fragment key={i}>
+                                      {part}
+                                      {i < arr.length - 1 && <span className="font-bold text-zinc-900 not-italic">{q.bold}</span>}
+                                    </React.Fragment>
+                                  ))}
+                                </p>
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-4 text-xl">
+                                  <span className="text-zinc-900 font-medium">{q.prefix}</span>
+                                  {q.blanks.map((ans, bIdx) => (
+                                    <input 
+                                      type="text"
+                                      placeholder="..."
+                                      key={`b1-${bIdx}`}
+                                      value={ex2Answers[`${q.id}-${bIdx}`] || ""}
+                                      onChange={(e) => handleEx2Change(q.id, bIdx, e.target.value)}
+                                      disabled={showEx2Results}
+                                      className={`
+                                        px-4 py-1 rounded-xl border-b-2 font-bold transition-all outline-none w-40 text-center
+                                        ${showEx2Results 
+                                          ? (ex2Answers[`${q.id}-${bIdx}`]?.toLowerCase().trim() === ans.toLowerCase().trim() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
+                                          : 'bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:bg-white'
+                                        }
+                                      `}
+                                    />
+                                  ))}
+                                  {q.mid && <span className="text-zinc-900 font-medium">{q.mid}</span>}
+                                  {q.blanks2 && q.blanks2.map((ans, bIdx) => (
+                                    <input 
+                                      type="text"
+                                      placeholder="..."
+                                      key={`b2-${bIdx}`}
+                                      value={ex2Answers[`${q.id}-${bIdx + q.blanks.length}`] || ""}
+                                      onChange={(e) => handleEx2Change(q.id, bIdx + q.blanks.length, e.target.value)}
+                                      disabled={showEx2Results}
+                                      className={`
+                                        px-4 py-1 rounded-xl border-b-2 font-bold transition-all outline-none w-40 text-center
+                                        ${showEx2Results 
+                                          ? (ex2Answers[`${q.id}-${bIdx + q.blanks.length}`]?.toLowerCase().trim() === ans.toLowerCase().trim() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
+                                          : 'bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:bg-white'
+                                        }
+                                      `}
+                                    />
+                                  ))}
+                                  <span className="text-zinc-400">{q.suffix}</span>
+                                </div>
+                              </div>
+                            </div>
+                            {showEx2Results && (
+                              <motion.div 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="ml-12 p-4 bg-zinc-50/50 rounded-2xl border border-zinc-100"
+                              >
+                                <p className="text-xs text-zinc-500 leading-relaxed">
+                                  <span className="font-bold text-zinc-900 uppercase tracking-widest text-[9px] mr-2">Structure:</span> {q.explanation}
+                                </p>
+                              </motion.div>
+                            )}
+                          </div>
+                        ))}
+
+                        <div className="flex justify-between items-center pt-12">
+                          <button 
+                            onClick={() => setStep(1)}
+                            className="flex items-center gap-2 text-zinc-400 font-bold uppercase tracking-widest text-[10px] hover:text-zinc-900 transition-colors"
+                          >
+                            <ChevronLeft size={16} /> Previous Module
+                          </button>
+                          {!showEx2Results ? (
+                            <button 
+                              onClick={() => setShowEx2Results(true)}
+                              className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200 active:scale-95"
+                            >
+                              Verify Rephrasing
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => setStep(3)}
+                              className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all flex items-center gap-3 shadow-xl shadow-zinc-200 active:scale-95"
+                            >
+                              Final Module <ChevronRight size={20} />
+                            </button>
+                          )}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="sticky top-32">
+                      <CouncilGraph />
+                    </aside>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 3 && (
+                <motion.div 
+                  key="step3"
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  className="space-y-16"
                 >
-                  <ChevronLeft size={18} /> Back
-                </button>
-                <button 
-                  onClick={() => setIsFinished(true)}
-                  className="px-8 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-all flex items-center gap-2"
-                >
-                  Finish Practice <CheckCircle2 size={18} />
-                </button>
-              </div>
-            </motion.div>
-          )}
+                  <div className="grid lg:grid-cols-[1fr_450px] gap-16 items-start">
+                    <div className="space-y-16">
+                      <section className="space-y-10">
+                        <div className="space-y-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                            Module 03
+                          </div>
+                          <h2 className="text-5xl font-serif font-bold tracking-tight leading-[1.1]">
+                            Comparative <span className="italic font-normal">Analysis</span>
+                          </h2>
+                          <p className="text-zinc-500 text-lg leading-relaxed max-w-md">
+                            Synthesize multiple data points. Identify the correlation between funding and engagement.
+                          </p>
+                        </div>
+
+                        <div className="space-y-6">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">Data Verification</h3>
+                          <div className="space-y-4">
+                            {exercise4Questions.map(q => (
+                              <div key={q.id} className={`p-6 glass-card rounded-3xl flex items-center justify-between gap-6 transition-all ${showEx4Results ? (ex4Answers[q.id]?.toLowerCase().trim() === q.answer.toString() ? 'bg-emerald-50/50 border-emerald-100' : 'bg-rose-50/50 border-rose-100') : ''}`}>
+                                <div className="flex items-start gap-4">
+                                  <span className="text-zinc-300 font-serif italic text-xl mt-1">{q.id}</span>
+                                  <p className="text-lg font-medium text-zinc-700 leading-snug">{q.text}</p>
+                                </div>
+                                <div className="shrink-0">
+                                  <input 
+                                    type="text"
+                                    placeholder="T / F"
+                                    value={ex4Answers[q.id] || ""}
+                                    onChange={(e) => handleEx4Change(q.id, e.target.value)}
+                                    disabled={showEx4Results}
+                                    className={`
+                                      px-4 py-2 rounded-xl border-b-2 font-bold transition-all outline-none w-24 text-center uppercase
+                                      ${showEx4Results 
+                                        ? (ex4Answers[q.id]?.toLowerCase().trim() === q.answer.toString() ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-rose-50 border-rose-500 text-rose-700')
+                                        : 'bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:bg-white'
+                                      }
+                                    `}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {!showEx4Results ? (
+                            <button 
+                              onClick={() => setShowEx4Results(true)}
+                              disabled={Object.keys(ex4Answers).length < exercise4Questions.length}
+                              className="w-full py-4 bg-zinc-100 text-zinc-900 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all disabled:opacity-50"
+                            >
+                              Verify Analysis
+                            </button>
+                          ) : (
+                            <div className="p-6 bg-amber-50/50 border border-amber-100 rounded-3xl flex items-start gap-4">
+                              <div className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+                                <Lightbulb size={16} className="text-amber-600" />
+                              </div>
+                              <p className="text-xs text-amber-900/70 leading-relaxed">
+                                <strong className="text-amber-900 font-bold uppercase tracking-widest text-[9px] block mb-1">Expert Insight</strong>
+                                The correlation between funding peaks and membership growth is the key feature. Year 3 shows a massive spike in both metrics.
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </section>
+
+                      <div className="flex justify-between items-center pt-12 border-t border-zinc-100">
+                        <button 
+                          onClick={() => setStep(2)}
+                          className="flex items-center gap-2 text-zinc-400 font-bold uppercase tracking-widest text-[10px] hover:text-zinc-900 transition-colors"
+                        >
+                          <ChevronLeft size={16} /> Previous Module
+                        </button>
+                        <button 
+                          onClick={() => setIsFinished(true)}
+                          className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all flex items-center gap-3 shadow-xl shadow-zinc-200 active:scale-95"
+                        >
+                          Complete Practice <CheckCircle2 size={20} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <aside className="sticky top-32">
+                      <CouncilGraph />
+                    </aside>
+                  </div>
+                </motion.div>
+              )}
             </div>
           ) : (
             <motion.div 
               key="finished"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="mt-12 p-12 bg-white border border-zinc-200 rounded-[3rem] shadow-xl text-center space-y-6"
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="mt-20 p-20 glass-card rounded-[4rem] text-center space-y-10 max-w-3xl mx-auto"
             >
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 size={40} />
+              <div className="w-24 h-24 bg-emerald-50 text-emerald-600 rounded-[2rem] flex items-center justify-center mx-auto shadow-inner">
+                <CheckCircle2 size={48} />
               </div>
-              <h2 className="text-4xl font-light tracking-tight">Practice Complete!</h2>
-              <p className="text-zinc-500 max-w-md mx-auto leading-relaxed">
-                You've successfully completed all the graph description exercises. 
-                You're now better prepared for IELTS Writing Task 1!
-              </p>
+              <div className="space-y-4">
+                <h2 className="text-6xl font-serif font-bold tracking-tight">Mastery Achieved.</h2>
+                <p className="text-zinc-500 text-xl leading-relaxed max-w-md mx-auto">
+                  You have successfully navigated the complexities of graph analysis. Your descriptive precision has improved.
+                </p>
+              </div>
               <button 
                 onClick={() => {
                   setEx1Answers({});
@@ -690,31 +750,46 @@ export default function App() {
                   setIsFinished(false);
                   setStep(1);
                 }}
-                className="px-8 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-all inline-flex items-center gap-2"
+                className="px-12 py-5 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all inline-flex items-center gap-3 shadow-2xl shadow-zinc-200 active:scale-95"
               >
-                <RefreshCcw size={18} /> Start Over
+                <RefreshCcw size={20} /> Restart Training
               </button>
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      <footer className="max-w-5xl mx-auto px-6 py-12 border-t border-zinc-200 text-center space-y-4">
-        <p className="text-sm text-zinc-400 font-medium uppercase tracking-widest">
-          IELTS Academic Writing Task 1 Training
-        </p>
-        <div className="flex justify-center gap-6">
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-            Interactive Graphs
+      <footer className="max-w-6xl mx-auto px-8 py-20 border-t border-zinc-100">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-white shadow-lg shadow-zinc-200">
+              <TrendingUp size={20} />
+            </div>
+            <div>
+              <span className="font-serif font-bold tracking-tight block">IELTS Masterclass</span>
+              <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">Academic Excellence</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
-            <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-            AI Sample Answers
+          
+          <div className="flex items-center gap-12">
+            <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
+              Interactive Data
+            </div>
+            <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+              <div className="w-1 h-1 bg-amber-500 rounded-full"></div>
+              Expert Logic
+            </div>
+            <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+              <div className="w-1 h-1 bg-zinc-900 rounded-full"></div>
+              Lexical Precision
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
-            <div className="w-2 h-2 bg-zinc-900 rounded-full"></div>
-            Vocabulary Practice
+
+          <div className="flex items-center gap-6 text-zinc-300">
+            <button className="hover:text-zinc-900 transition-colors"><BookOpen size={18} /></button>
+            <button className="hover:text-zinc-900 transition-colors"><Award size={18} /></button>
+            <button className="hover:text-zinc-900 transition-colors"><HelpCircle size={18} /></button>
           </div>
         </div>
       </footer>
