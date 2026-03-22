@@ -374,7 +374,7 @@ export default function App() {
                           <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6">Lexical Resource</h3>
                           <div className="flex flex-wrap gap-3">
                             {exercise1Options.map(opt => (
-                              <span key={opt} className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 tracking-tight">
+                              <span key={opt} className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-bold text-zinc-600 tracking-tight">
                                 {opt}
                               </span>
                             ))}
@@ -386,7 +386,7 @@ export default function App() {
                         <div className="grid gap-x-16 gap-y-12">
                           {exercise1Questions.map(q => (
                             <div key={q.id} className="space-y-4">
-                              <div className="flex items-start gap-4 text-xl">
+                              <div className="flex items-start gap-4 text-lg">
                                 <span className="text-zinc-200 font-serif italic text-3xl leading-none mt-1">{q.id.toString().padStart(2, '0')}</span>
                                 <div className="flex-1 leading-relaxed">
                                   <span className="text-zinc-400">{q.text}</span>
@@ -518,7 +518,7 @@ export default function App() {
                           <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6">Vocabulary Box</h3>
                           <div className="flex flex-wrap gap-3">
                             {exercise2Options.map(opt => (
-                              <span key={opt} className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 tracking-tight">
+                              <span key={opt} className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-bold text-zinc-600 tracking-tight">
                                 {opt}
                               </span>
                             ))}
@@ -540,7 +540,7 @@ export default function App() {
                                     </React.Fragment>
                                   ))}
                                 </p>
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-4 text-xl">
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-4 text-lg">
                                   <span className="text-zinc-900 font-medium">{q.prefix}</span>
                                   {q.blanks.map((ans, bIdx) => (
                                     <input 
